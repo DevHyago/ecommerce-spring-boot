@@ -8,26 +8,35 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 
-@Entity
-public class Category implements Serializable{
+@Entity()
+public class Product implements Serializable{
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1l;
 
   @Id
-  @GeneratedValue(strategy=GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
   private String name;
+  private Double price;
 
-  @ManyToMany(mappedBy="categories")
-  private List<Product> products = new ArrayList<>();
+  @ManyToMany
+  @JoinTable(
+    name = "PRODUCT_CATEGORY",
+    joinColumns = @JoinColumn(name = "product_id"),
+    inverseJoinColumns = @JoinColumn(name = "category_id")
+  )
+  private List<Category> categories = new ArrayList<>();
 
-  public Category(){}
+  public Product(){}
 
-  public Category(Integer id, String name){
+  public Product(Integer id, String name, Double price){
     this.id = id;
     this.name = name;
+    this.price = price;
   }
 
   public Integer getId(){
@@ -46,12 +55,20 @@ public class Category implements Serializable{
     this.name = name;
   }
 
-  public List<Product> getProducts() {
-    return this.products;
+  public Double getPrice(){
+    return this.price;
   }
 
-  public void setProducts(List<Product> products) {
-      this.products = products;
+  public void setPrice(Double price){
+    this.price = price;
+  }
+
+  public List<Category> getCategories() {
+    return this.categories;
+  }
+
+  public void setCategories(List<Category> categories) {
+    this.categories = categories;
   }
 
   @Override
@@ -67,7 +84,7 @@ public class Category implements Serializable{
     if(this == obj) return true;
     if(obj == null) return false;
     if(this.getClass() != obj.getClass()) return false;
-    Category other = (Category) obj;
+    Product other = (Product) obj;
     if(this.id == null){
       if(other.id != null) return false;
     }else if(!this.id.equals(other.id)) {
@@ -75,5 +92,4 @@ public class Category implements Serializable{
     }
     return true;
   }
-
 }
